@@ -1,5 +1,5 @@
 pub fn solve_1() -> u32 {
-    include_str!("../input/03.txt")
+    include_str!("../input/day03.txt")
         .lines()
         .map(|x| {
             assert!(x.len() % 2 == 0, "line '{x}' has odd length, expected even");
@@ -21,7 +21,9 @@ pub fn solve_1() -> u32 {
 }
 
 pub fn solve_2() -> u32 {
-    let lines = include_str!("../input/03.txt").lines().collect::<Vec<_>>();
+    let lines = include_str!("../input/day03.txt")
+        .lines()
+        .collect::<Vec<_>>();
     assert!(
         lines.len() % 3 == 0,
         "number of lines is not a multiple of 3"

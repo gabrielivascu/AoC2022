@@ -1,5 +1,5 @@
 pub fn solve_1() -> i64 {
-    include_str!("../input/02.txt")
+    include_str!("../input/day02.txt")
         .lines()
         .fold(0, |acc, line| {
             let mut tokens = line.split(' ');
@@ -21,7 +21,7 @@ pub fn solve_1() -> i64 {
 }
 
 pub fn solve_2() -> i64 {
-    include_str!("../input/02.txt")
+    include_str!("../input/day02.txt")
         .lines()
         .fold(0, |acc, line| {
             let mut tokens = line.split(' ');
