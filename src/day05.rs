@@ -1,6 +1,4 @@
-fn build_input<'a>() -> (&'a str, Vec<Vec<char>>) {
-    let input = include_str!("../input/day05.txt");
-
+fn build_stacks(input: &str) -> (Vec<Vec<char>>, usize) {
     let mut max_length = 0;
     let mut num_stacks = 0;
     for line in input.lines() {
@@ -33,13 +31,13 @@ fn build_input<'a>() -> (&'a str, Vec<Vec<char>>) {
         }
     }
 
-    (input, stacks)
+    (stacks, max_length)
 }
 
-pub fn solve_1() -> String {
-    let (input, mut stacks) = build_input();
+pub fn solve_1(input: &str) -> String {
+    let (mut stacks, max_length) = build_stacks(input);
 
-    for line in input.lines().skip(stacks.len() + 1) {
+    for line in input.lines().skip(max_length + 2) {
         let parts = line.split_once(" from ").unwrap();
         let count = parts.0.split_once(' ').unwrap().1.parse::<usize>().unwrap();
         let (src, dst) = parts.1.split_once(" to ").unwrap();
@@ -60,10 +58,10 @@ pub fn solve_1() -> String {
     output
 }
 
-pub fn solve_2() -> String {
-    let (input, mut stacks) = build_input();
+pub fn solve_2(input: &str) -> String {
+    let (mut stacks, max_length) = build_stacks(input);
 
-    for line in input.lines().skip(stacks.len() + 1) {
+    for line in input.lines().skip(max_length + 2) {
         let parts = line.split_once(" from ").unwrap();
         let count = parts.0.split_once(' ').unwrap().1.parse::<usize>().unwrap();
         let (src, dst) = parts.1.split_once(" to ").unwrap();
@@ -85,4 +83,19 @@ pub fn solve_2() -> String {
         output.push(*stack.last().unwrap());
     }
     output
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_1() {
+        assert_eq!(solve_1(include_str!("../input/day05-sample.txt")), "CMZ");
+    }
+
+    #[test]
+    fn test_2() {
+        assert_eq!(solve_2(include_str!("../input/day05-sample.txt")), "MCD");
+    }
 }

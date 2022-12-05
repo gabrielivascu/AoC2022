@@ -1,5 +1,5 @@
-pub fn solve_1() -> usize {
-    include_str!("../input/day04.txt")
+pub fn solve_1(input: &str) -> usize {
+    input
         .lines()
         .filter(|line| {
             let mut parts = line.split(',');
@@ -23,8 +23,8 @@ pub fn solve_1() -> usize {
         .count()
 }
 
-pub fn solve_2() -> usize {
-    include_str!("../input/day04.txt")
+pub fn solve_2(input: &str) -> usize {
+    input
         .lines()
         .filter(|line| {
             let mut parts = line.split(',');
@@ -51,4 +51,19 @@ pub fn solve_2() -> usize {
                 || (a2 <= a1 && a1 <= b2 && b2 <= b1)
         })
         .count()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_1() {
+        assert_eq!(solve_1(include_str!("../input/day04-sample.txt")), 2);
+    }
+
+    #[test]
+    fn test_2() {
+        assert_eq!(solve_2(include_str!("../input/day04-sample.txt")), 4);
+    }
 }
