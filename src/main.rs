@@ -87,7 +87,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             );
             let input_10 = include_str!("../input/day10.txt");
             println!(
-                "10: {} {}",
+                "10: {}\n{}",
                 day10::solve_1(input_10),
                 day10::solve_2(input_10)
             );
@@ -221,7 +221,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             }
             "10" => {
                 let input = include_str!("../input/day10.txt");
-                println!("{} {}", day10::solve_1(input), day10::solve_2(input));
+                println!("{}\n{}", day10::solve_1(input), day10::solve_2(input));
             }
             "11" => {
                 let input = include_str!("../input/day11.txt");
