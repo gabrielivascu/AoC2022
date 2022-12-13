@@ -4,21 +4,12 @@ use nom::{
 };
 
 pub fn solve_1(input: &str) -> usize {
-    let packet_pairs = build_packet_pairs(input);
-    let mut sum = 0;
-    for (idx, pair) in packet_pairs.iter().enumerate() {
-        let cmpres = cmp_packets(&pair.0, &pair.1);
-        assert!(
-            cmpres != PacketOrder::Continue,
-            "packet pair {} has indecisive comparison",
-            idx + 1
-        );
-        if cmpres == PacketOrder::Right {
-            sum += idx + 1;
-        }
-    }
-
-    sum
+    build_packet_pairs(input)
+        .iter()
+        .enumerate()
+        .filter(|(_, pair)| cmp_packets(&pair.0, &pair.1) == PacketOrder::Right)
+        .map(|(idx, _)| idx + 1)
+        .sum()
 }
 
 pub fn solve_2(input: &str) -> usize {
@@ -146,19 +137,18 @@ fn parse_packet(input: &str) -> IResult<&str, Packet> {
 }
 
 fn build_packet_pairs(input: &str) -> Vec<PacketPair> {
-    let mut packet_pairs = vec![];
-    for chunk in input
+    input
         .lines()
         .filter(|&x| !x.is_empty())
         .collect::<Vec<_>>()
         .chunks(2)
-    {
-        let (lhs, rhs) = (chunk[0], chunk[1]);
-        let lhs = parse_packet(lhs).unwrap().1;
-        let rhs = parse_packet(rhs).unwrap().1;
-        packet_pairs.push((lhs, rhs));
-    }
-    packet_pairs
+        .map(|chunk| {
+            (
+                parse_packet(chunk[0]).unwrap().1,
+                parse_packet(chunk[1]).unwrap().1,
+            )
+        })
+        .collect()
 }
 
 fn build_single_packets(input: &str) -> Vec<Packet> {
