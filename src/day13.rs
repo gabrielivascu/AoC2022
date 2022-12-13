@@ -1,7 +1,4 @@
-use nom::{
-    bytes::complete::tag, character::complete, combinator::map, multi::separated_list0,
-    sequence::delimited, IResult,
-};
+use serde::Deserialize;
 
 pub fn solve_1(input: &str) -> usize {
     build_packet_pairs(input)
@@ -14,8 +11,8 @@ pub fn solve_1(input: &str) -> usize {
 
 pub fn solve_2(input: &str) -> usize {
     let mut packets = build_single_packets(input);
-    packets.push(parse_packet("[[2]]").unwrap().1);
-    packets.push(parse_packet("[[6]]").unwrap().1);
+    packets.push(serde_json::from_str("[[2]]").unwrap());
+    packets.push(serde_json::from_str("[[6]]").unwrap());
 
     packets.sort_by(|lhs, rhs| match cmp_packets(lhs, rhs) {
         PacketOrder::Continue => std::cmp::Ordering::Equal,
@@ -26,19 +23,7 @@ pub fn solve_2(input: &str) -> usize {
     packets
         .iter()
         .enumerate()
-        .filter(|(_, p)| {
-            if p.len() == 1 {
-                match &p[0] {
-                    PacketPart::List(l) => {
-                        l.len() == 1
-                            && (l[0] == PacketPart::Single(2) || l[0] == PacketPart::Single(6))
-                    }
-                    PacketPart::Single(_) => false,
-                }
-            } else {
-                false
-            }
-        })
+        .filter(|(_, p)| p.is_divider())
         .map(|(idx, _)| idx + 1)
         .product()
 }
@@ -65,16 +50,35 @@ enum PacketOrder {
     Continue,
 }
 
-#[derive(Debug, Clone, PartialEq)]
-enum PacketPart {
+#[derive(Debug, Clone, PartialEq, Deserialize)]
+#[serde(untagged)]
+enum Packet {
     Single(i32),
-    List(Vec<PacketPart>),
+    List(Vec<Packet>),
 }
 
-type Packet = Vec<PacketPart>;
-type PacketPair = (Packet, Packet);
+impl Packet {
+    fn is_divider(&self) -> bool {
+        match self {
+            Packet::Single(_) => false,
+            Packet::List(l1) => {
+                l1.len() == 1
+                    && match &l1[0] {
+                        Packet::Single(_) => false,
+                        Packet::List(l2) => {
+                            l2.len() == 1
+                                && match &l2[0] {
+                                    Packet::Single(2 | 6) => true,
+                                    Packet::Single(_) | Packet::List(_) => false,
+                                }
+                        }
+                    }
+            }
+        }
+    }
+}
 
-fn cmp_lists(lhs: &[PacketPart], rhs: &[PacketPart]) -> PacketOrder {
+fn cmp_lists(lhs: &[Packet], rhs: &[Packet]) -> PacketOrder {
     let (mut lhs_iter, mut rhs_iter) = (lhs.iter(), rhs.iter());
     loop {
         match (lhs_iter.next(), rhs_iter.next()) {
@@ -87,7 +91,7 @@ fn cmp_lists(lhs: &[PacketPart], rhs: &[PacketPart]) -> PacketOrder {
             (None, None) => {
                 return PacketOrder::Continue;
             }
-            (Some(a), Some(b)) => match cmp_parts(a, b) {
+            (Some(lhs), Some(rhs)) => match cmp_packets(lhs, rhs) {
                 PacketOrder::Right => {
                     return PacketOrder::Right;
                 }
@@ -100,43 +104,20 @@ fn cmp_lists(lhs: &[PacketPart], rhs: &[PacketPart]) -> PacketOrder {
     }
 }
 
-fn cmp_parts(lhs: &PacketPart, rhs: &PacketPart) -> PacketOrder {
+fn cmp_packets(lhs: &Packet, rhs: &Packet) -> PacketOrder {
     match (lhs, rhs) {
-        (PacketPart::Single(a), PacketPart::Single(b)) => match a.cmp(b) {
+        (Packet::Single(lhs), Packet::Single(rhs)) => match lhs.cmp(rhs) {
             std::cmp::Ordering::Equal => PacketOrder::Continue,
             std::cmp::Ordering::Less => PacketOrder::Right,
             std::cmp::Ordering::Greater => PacketOrder::Wrong,
         },
-        (PacketPart::List(a), PacketPart::List(b)) => cmp_lists(a, b),
-        (PacketPart::Single(a), PacketPart::List(b)) => cmp_lists(&[PacketPart::Single(*a)], b),
-        (PacketPart::List(a), PacketPart::Single(b)) => cmp_lists(a, &[PacketPart::Single(*b)]),
+        (Packet::List(lhs), Packet::List(rhs)) => cmp_lists(lhs, rhs),
+        (Packet::Single(lhs), Packet::List(rhs)) => cmp_lists(&[Packet::Single(*lhs)], rhs),
+        (Packet::List(lhs), Packet::Single(rhs)) => cmp_lists(lhs, &[Packet::Single(*rhs)]),
     }
 }
 
-fn cmp_packets(lhs: &Packet, rhs: &Packet) -> PacketOrder {
-    cmp_parts(
-        &PacketPart::List((*lhs).clone()),
-        &PacketPart::List((*rhs).clone()),
-    )
-}
-
-fn parse_integer(input: &str) -> IResult<&str, i32> {
-    complete::i32(input)
-}
-
-fn parse_packet(input: &str) -> IResult<&str, Packet> {
-    use nom::Parser;
-    delimited(
-        tag("["),
-        separated_list0(
-            tag(","),
-            map(parse_integer, PacketPart::Single).or(map(parse_packet, PacketPart::List)),
-        ),
-        tag("]"),
-    )(input)
-}
-
-fn build_packet_pairs(input: &str) -> Vec<PacketPair> {
+fn build_packet_pairs(input: &str) -> Vec<(Packet, Packet)> {
     input
         .lines()
         .filter(|&x| !x.is_empty())
@@ -144,8 +125,8 @@ fn build_packet_pairs(input: &str) -> Vec<PacketPair> {
         .chunks(2)
         .map(|chunk| {
             (
-                parse_packet(chunk[0]).unwrap().1,
-                parse_packet(chunk[1]).unwrap().1,
+                serde_json::from_str(chunk[0]).unwrap(),
+                serde_json::from_str(chunk[1]).unwrap(),
             )
         })
         .collect()
@@ -155,6 +136,6 @@ fn build_single_packets(input: &str) -> Vec<Packet> {
     input
         .lines()
         .filter(|&x| !x.is_empty())
-        .map(|x| parse_packet(x).unwrap().1)
+        .map(|x| serde_json::from_str(x).unwrap())
         .collect()
 }
