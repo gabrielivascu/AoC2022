@@ -23,7 +23,11 @@ pub fn solve_2(input: &str) -> usize {
     packets
         .iter()
         .enumerate()
-        .filter(|(_, p)| p.is_divider())
+        .filter(|(_, p)| {
+            ["[[2]]", "[[6]]"]
+                .map(|x| serde_json::from_str(x).unwrap())
+                .contains(*p)
+        })
         .map(|(idx, _)| idx + 1)
         .product()
 }
@@ -55,27 +59,6 @@ enum PacketOrder {
 enum Packet {
     Single(i32),
     List(Vec<Packet>),
-}
-
-impl Packet {
-    fn is_divider(&self) -> bool {
-        match self {
-            Packet::Single(_) => false,
-            Packet::List(l1) => {
-                l1.len() == 1
-                    && match &l1[0] {
-                        Packet::Single(_) => false,
-                        Packet::List(l2) => {
-                            l2.len() == 1
-                                && match &l2[0] {
-                                    Packet::Single(2 | 6) => true,
-                                    Packet::Single(_) | Packet::List(_) => false,
-                                }
-                        }
-                    }
-            }
-        }
-    }
 }
 
 fn cmp_lists(lhs: &[Packet], rhs: &[Packet]) -> PacketOrder {
