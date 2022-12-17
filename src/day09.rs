@@ -1,5 +1,13 @@
 use std::collections::HashSet;
 
+pub fn solve_1(input: &str) -> usize {
+    solver(input, 2)
+}
+
+pub fn solve_2(input: &str) -> usize {
+    solver(input, 10)
+}
+
 fn move_head(head: (i32, i32), dir: &str) -> (i32, i32) {
     let (mut x, mut y) = (head.0, head.1);
     match dir {
@@ -40,14 +48,6 @@ fn solver(input: &str, rope_size: usize) -> usize {
     }
 
     visited.len()
-}
-
-pub fn solve_1(input: &str) -> usize {
-    solver(input, 2)
-}
-
-pub fn solve_2(input: &str) -> usize {
-    solver(input, 10)
 }
 
 #[cfg(test)]

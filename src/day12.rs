@@ -1,6 +1,22 @@
 use itertools::iproduct;
 use std::collections::{BTreeSet, HashMap};
 
+pub fn solve_1(input: &str) -> u32 {
+    let (grid, start, end) = build_input_grid(input);
+    dijkstra_shortest_path(&grid, start, end)
+}
+
+pub fn solve_2(input: &str) -> u32 {
+    let (grid, _, end) = build_input_grid(input);
+    let mut minpath = u32::MAX;
+    for (y, x) in iproduct!(0..grid.height, 0..grid.width) {
+        if "a".as_bytes()[0] == grid.map[y][x] {
+            minpath = minpath.min(dijkstra_shortest_path(&grid, (y, x), end));
+        }
+    }
+    minpath
+}
+
 #[derive(Debug)]
 struct Grid {
     map: Vec<Vec<u8>>,
@@ -82,22 +98,6 @@ fn dijkstra_shortest_path(grid: &Grid, start: (usize, usize), end: (usize, usize
         }
     }
     *distance.get(&end).unwrap_or(&u32::MAX)
-}
-
-pub fn solve_1(input: &str) -> u32 {
-    let (grid, start, end) = build_input_grid(input);
-    dijkstra_shortest_path(&grid, start, end)
-}
-
-pub fn solve_2(input: &str) -> u32 {
-    let (grid, _, end) = build_input_grid(input);
-    let mut minpath = u32::MAX;
-    for (y, x) in iproduct!(0..grid.height, 0..grid.width) {
-        if "a".as_bytes()[0] == grid.map[y][x] {
-            minpath = minpath.min(dijkstra_shortest_path(&grid, (y, x), end));
-        }
-    }
-    minpath
 }
 
 #[cfg(test)]

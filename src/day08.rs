@@ -1,19 +1,5 @@
 use itertools::iproduct;
 
-fn build_grid(input: &str) -> (Vec<Vec<u32>>, usize, usize) {
-    let mut grid = vec![];
-    let (width, mut height) = (input.lines().next().unwrap().len(), 0_usize);
-    for line in input.lines() {
-        grid.push(
-            line.chars()
-                .map(|x| x.to_digit(10).unwrap())
-                .collect::<Vec<_>>(),
-        );
-        height += 1;
-    }
-    (grid, height, width)
-}
-
 pub fn solve_1(input: &str) -> usize {
     let (grid, height, width) = build_grid(input);
 
@@ -74,6 +60,20 @@ pub fn solve_2(input: &str) -> i32 {
         })
         .max()
         .unwrap()
+}
+
+fn build_grid(input: &str) -> (Vec<Vec<u32>>, usize, usize) {
+    let mut grid = vec![];
+    let (width, mut height) = (input.lines().next().unwrap().len(), 0_usize);
+    for line in input.lines() {
+        grid.push(
+            line.chars()
+                .map(|x| x.to_digit(10).unwrap())
+                .collect::<Vec<_>>(),
+        );
+        height += 1;
+    }
+    (grid, height, width)
 }
 
 #[cfg(test)]

@@ -1,6 +1,16 @@
 use itertools::Itertools;
 use std::cell::RefCell;
 
+pub fn solve_1(input: &str) -> usize {
+    let monkeys = build_monkeys(input);
+    solver(&monkeys, 20, Some(3))
+}
+
+pub fn solve_2(input: &str) -> usize {
+    let monkeys = build_monkeys(input);
+    solver(&monkeys, 10000, None)
+}
+
 #[derive(Debug, Clone)]
 enum Operation {
     None,
@@ -107,16 +117,6 @@ fn solver(monkeys: &Vec<RefCell<Monkey>>, rounds: usize, divider: Option<i64>) -
         .sorted_by(|a, b| Ord::cmp(b, a))
         .take(2)
         .product()
-}
-
-pub fn solve_1(input: &str) -> usize {
-    let monkeys = build_monkeys(input);
-    solver(&monkeys, 20, Some(3))
-}
-
-pub fn solve_2(input: &str) -> usize {
-    let monkeys = build_monkeys(input);
-    solver(&monkeys, 10000, None)
 }
 
 #[cfg(test)]

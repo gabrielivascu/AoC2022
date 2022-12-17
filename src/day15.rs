@@ -1,3 +1,13 @@
+pub fn solve_1(input: &str) -> usize {
+    let (data, p_min, p_max) = build_input_data(input);
+    solver_1(&data, p_min, p_max, 2_000_000)
+}
+
+pub fn solve_2(input: &str) -> i64 {
+    let (data, _, _) = build_input_data(input);
+    solver_2(&data, 4_000_001)
+}
+
 fn solver_1(data: &[(Sensor, Beacon)], p_min: Point, p_max: Point, y_axis: i32) -> usize {
     let mut count = 0;
 
@@ -39,11 +49,6 @@ fn solver_1(data: &[(Sensor, Beacon)], p_min: Point, p_max: Point, y_axis: i32) 
     count
 }
 
-pub fn solve_1(input: &str) -> usize {
-    let (data, p_min, p_max) = build_input_data(input);
-    solver_1(&data, p_min, p_max, 2_000_000)
-}
-
 fn solver_2(data: &Vec<(Sensor, Beacon)>, width: i32) -> i64 {
     let uncovered = compute_uncovered(data, &Rectangle::new(Point::new(0, 0), width, width));
     assert!(uncovered.len() == 1, "bug: more than one solution");
@@ -53,11 +58,6 @@ fn solver_2(data: &Vec<(Sensor, Beacon)>, width: i32) -> i64 {
         "bug: not an 1x1 rectangle"
     );
     i64::from(beacon.point.x) * 4_000_000 + i64::from(beacon.point.y)
-}
-
-pub fn solve_2(input: &str) -> i64 {
-    let (data, _, _) = build_input_data(input);
-    solver_2(&data, 4_000_001)
 }
 
 fn build_input_data(input: &str) -> (Vec<(Sensor, Beacon)>, Point, Point) {
