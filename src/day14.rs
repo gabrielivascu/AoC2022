@@ -79,21 +79,6 @@ pub fn solve_2(input: &str) -> usize {
     grid.map.values().filter(|&x| *x == 'o').count()
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_1() {
-        assert_eq!(solve_1(include_str!("../input/day14-sample.txt")), 24);
-    }
-
-    #[test]
-    fn test_2() {
-        assert_eq!(solve_2(include_str!("../input/day14-sample.txt")), 93);
-    }
-}
-
 #[derive(Debug, PartialEq, Eq, Hash, Copy, Clone)]
 struct Point {
     x: i32,
@@ -150,4 +135,19 @@ fn build_input_grid(input: &str) -> Grid {
         }
     }
     grid
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_1() {
+        assert_eq!(solve_1(include_str!("../input/day14-sample.txt")), 24);
+    }
+
+    #[test]
+    fn test_2() {
+        assert_eq!(solve_2(include_str!("../input/day14-sample.txt")), 93);
+    }
 }

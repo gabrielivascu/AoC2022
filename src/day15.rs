@@ -60,23 +60,6 @@ pub fn solve_2(input: &str) -> i64 {
     solver_2(&data, 4_000_001)
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_1() {
-        let (data, p_min, p_max) = build_input_data(include_str!("../input/day15-sample.txt"));
-        assert_eq!(solver_1(&data, p_min, p_max, 10), 26);
-    }
-
-    #[test]
-    fn test_2() {
-        let (data, _, _) = build_input_data(include_str!("../input/day15-sample.txt"));
-        assert_eq!(solver_2(&data, 21), 56000011);
-    }
-}
-
 fn build_input_data(input: &str) -> (Vec<(Sensor, Beacon)>, Point, Point) {
     let (mut x_min, mut y_min) = (i32::MAX, i32::MAX);
     let (mut x_max, mut y_max) = (i32::MIN, i32::MIN);
@@ -203,5 +186,22 @@ impl Rectangle {
                 height2,
             ),
         ]
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_1() {
+        let (data, p_min, p_max) = build_input_data(include_str!("../input/day15-sample.txt"));
+        assert_eq!(solver_1(&data, p_min, p_max, 10), 26);
+    }
+
+    #[test]
+    fn test_2() {
+        let (data, _, _) = build_input_data(include_str!("../input/day15-sample.txt"));
+        assert_eq!(solver_2(&data, 21), 56000011);
     }
 }
