@@ -175,12 +175,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                 day24::solve_1(input_24),
                 day24::solve_2(input_24)
             );
-            let input_25 = include_str!("../input/day25.txt");
-            println!(
-                "25: {} {}",
-                day25::solve_1(input_25),
-                day25::solve_2(input_25)
-            );
+            println!("25: {}", day25::solve(include_str!("../input/day25.txt")));
         }
         _ => match args[1].as_str() {
             "1" => {
@@ -280,8 +275,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                 println!("{} {}", day24::solve_1(input), day24::solve_2(input));
             }
             "25" => {
-                let input = include_str!("../input/day25.txt");
-                println!("{} {}", day25::solve_1(input), day25::solve_2(input));
+                println!("{}", day25::solve(include_str!("../input/day25.txt")));
             }
             _ => return Err(format!("Invalid day: '{}'", args[1]).into()),
         },
